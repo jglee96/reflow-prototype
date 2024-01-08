@@ -2,9 +2,6 @@ import ReactFlow, {
   Controls,
   Panel,
   NodeOrigin,
-  OnConnectStart,
-  OnConnectEnd,
-  useStoreApi,
   Node,
   useReactFlow,
   Edge,
@@ -12,7 +9,7 @@ import ReactFlow, {
 import Dagre, { GraphLabel } from "@dagrejs/dagre";
 import MindMapNode from "./components/MindMapNode";
 import MindMapEdge from "./components/MindMapEdge";
-import { useCallback, useRef } from "react";
+import { useCallback } from "react";
 import { Button } from "antd";
 import { useFlowActions, useFlowState } from "./store";
 import { useShallow } from "zustand/react/shallow";
@@ -61,12 +58,9 @@ const getLayoutedElements = (
 function Flow() {
   const nodes = useFlowState(useShallow((state) => state.nodes));
   const edges = useFlowState(useShallow((state) => state.edges));
-  const { setNodes, setEdges, onNodesChange, onEdgesChange, addChildNode } =
+  const { setNodes, setEdges, onNodesChange, onEdgesChange, addEdge } =
     useFlowActions();
-
-  const connectingNodeId = useRef<string | null>(null);
-  const store = useStoreApi();
-  const { screenToFlowPosition, fitView } = useReactFlow();
+  const { fitView } = useReactFlow();
 
   const onLayout = useCallback(
     (options: GraphLabel) => {
@@ -82,74 +76,13 @@ function Flow() {
     [nodes, edges, setNodes, setEdges, fitView]
   );
 
-  const getChildNodePosition = useCallback(
-    (event: MouseEvent | TouchEvent, parentNode?: Node) => {
-      const { domNode } = store.getState();
-
-      if (
-        !domNode ||
-        // we need to check if these properites exist, because when a node is not initialized yet,
-        // it doesn't have a positionAbsolute nor a width or height
-        !parentNode?.positionAbsolute ||
-        !parentNode?.width ||
-        !parentNode?.height
-      ) {
-        return;
-      }
-
-      const isTouchEvent = "touches" in event;
-      const x = isTouchEvent ? event.touches[0].clientX : event.clientX;
-      const y = isTouchEvent ? event.touches[0].clientY : event.clientY;
-      // we need to remove the wrapper bounds, in order to get the correct mouse position
-      const panePosition = screenToFlowPosition({
-        x,
-        y,
-      });
-
-      // we are calculating with positionAbsolute here because child nodes are positioned relative to their parent
-      return {
-        x:
-          panePosition.x - parentNode.positionAbsolute.x + parentNode.width / 2,
-        y:
-          panePosition.y -
-          parentNode.positionAbsolute.y +
-          parentNode.height / 2,
-      };
-    },
-    [screenToFlowPosition, store]
-  );
-
-  const onConnectStart: OnConnectStart = useCallback((_, { nodeId }) => {
-    connectingNodeId.current = nodeId;
-  }, []);
-
-  const onConnectEnd: OnConnectEnd = useCallback(
-    (event) => {
-      const { nodeInternals } = store.getState();
-      const targetIsPane = (event.target as Element).classList.contains(
-        "react-flow__pane"
-      );
-
-      if (targetIsPane && connectingNodeId.current) {
-        const parentNode = nodeInternals.get(connectingNodeId.current);
-        const childNodePosition = getChildNodePosition(event, parentNode);
-
-        if (parentNode && childNodePosition) {
-          addChildNode(parentNode, childNodePosition);
-        }
-      }
-    },
-    [addChildNode, getChildNodePosition, store]
-  );
-
   return (
     <ReactFlow
       nodes={nodes}
       edges={edges}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
-      onConnectStart={onConnectStart}
-      onConnectEnd={onConnectEnd}
+      onConnect={addEdge}
       nodeTypes={nodeTypes}
       edgeTypes={edgeTypes}
       nodeOrigin={nodeOrigin}

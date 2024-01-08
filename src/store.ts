@@ -1,4 +1,3 @@
-import { nanoid } from "nanoid";
 import {
   Edge,
   EdgeChange,
@@ -8,7 +7,8 @@ import {
   OnEdgesChange,
   applyNodeChanges,
   applyEdgeChanges,
-  XYPosition,
+  Connection,
+  addEdge,
 } from "reactflow";
 import { create } from "zustand";
 
@@ -22,7 +22,7 @@ interface Action {
   setEdges: (edges: Edge[]) => void;
   onNodesChange: OnNodesChange;
   onEdgesChange: OnEdgesChange;
-  addChildNode: (parentNode: Node, position: XYPosition) => void;
+  addEdge: (data: Connection) => void;
 }
 
 export const useFlowState = create<RFState & { actions: Action }>()(
@@ -55,25 +55,9 @@ export const useFlowState = create<RFState & { actions: Action }>()(
           edges: applyEdgeChanges(changes, get().edges),
         });
       },
-      addChildNode: (parentNode: Node, position: XYPosition) => {
-        const newNode = {
-          id: nanoid(),
-          type: "mindmap",
-          data: { label: "New Node" },
-          position,
-          parentNode: parentNode.id,
-        };
-
-        const newEdge = {
-          id: nanoid(),
-          source: parentNode.id,
-          target: newNode.id,
-        };
-
-        set({
-          nodes: [...get().nodes, newNode],
-          edges: [...get().edges, newEdge],
-        });
+      addEdge: (data: Connection) => {
+        const edges = addEdge(data, get().edges);
+        set({ edges });
       },
     },
   })

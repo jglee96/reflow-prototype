@@ -1,4 +1,4 @@
-import { Input } from "antd";
+import { Button } from "antd";
 import { Handle, NodeProps, Position } from "reactflow";
 
 export type NodeData = {
@@ -8,7 +8,7 @@ export type NodeData = {
 function MindMapNode({ data }: NodeProps<NodeData>) {
   return (
     <>
-      <Input defaultValue={data.label} />
+      <Button>{data.label}</Button>
       <Handle type="target" position={Position.Top} />
       <Handle type="source" position={Position.Bottom} />
     </>
