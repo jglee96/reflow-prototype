@@ -10,15 +10,15 @@ import ReactFlow, {
   Edge,
 } from "reactflow";
 import Dagre, { GraphLabel } from "@dagrejs/dagre";
-
-import { useFlowActions, useFlowState } from "./store";
-
-// we have to import the React Flow styles for it to work
-import "reactflow/dist/style.css";
 import MindMapNode from "./components/MindMapNode";
 import MindMapEdge from "./components/MindMapEdge";
 import { useCallback, useRef } from "react";
 import { Button } from "antd";
+import { useFlowActions, useFlowState } from "./store";
+import { useShallow } from "zustand/react/shallow";
+
+// we have to import the React Flow styles for it to work
+import "reactflow/dist/style.css";
 
 const nodeTypes = {
   mindmap: MindMapNode,
@@ -59,8 +59,8 @@ const getLayoutedElements = (
 };
 
 function Flow() {
-  const nodes = useFlowState((state) => state.nodes);
-  const edges = useFlowState((state) => state.edges);
+  const nodes = useFlowState(useShallow((state) => state.nodes));
+  const edges = useFlowState(useShallow((state) => state.edges));
   const { setNodes, setEdges, onNodesChange, onEdgesChange, addChildNode } =
     useFlowActions();
 
