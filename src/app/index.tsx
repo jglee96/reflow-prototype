@@ -20,6 +20,7 @@ import { useCallback, useRef } from "react";
 
 const nodeTypes = {
   mindmap: MindMapNode,
+  room: MindMapNode,
 };
 
 const edgeTypes = {

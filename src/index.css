@@ -1,7 +1,7 @@
 body {
   margin: 0;
 }
- 
+
 html,
 body,
 #root {
@@ -10,6 +10,14 @@ body,
 
 .react-flow__node-mindmap {
   background: #f6ad55;
+  border-radius: 2px;
+  border: 1px solid transparent;
+  padding: 2px 5px;
+  font-weight: 700;
+}
+
+.react-flow__node-room {
+  background: #ff0000;
   border-radius: 2px;
   border: 1px solid transparent;
   padding: 2px 5px;
