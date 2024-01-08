@@ -7,3 +7,20 @@ body,
 #root {
   height: 100%;
 }
+
+.react-flow__node-root button {
+  background-color: #203864;
+  color: #ffffff;
+}
+
+.react-flow__node-c1 button {
+  background-color: #8faadc;
+}
+
+.react-flow__node-c2 button {
+  background-color: #d9d9d9;
+}
+
+.react-flow__node-person button {
+  background-color: #ffffff;
+}

@@ -1,9 +1,6 @@
 import { Button } from "antd";
 import { Handle, NodeProps, Position } from "reactflow";
-
-export type NodeData = {
-  label: string;
-};
+import { NodeData } from "../store";
 
 function MindMapNode({ data }: NodeProps<NodeData>) {
   return (
