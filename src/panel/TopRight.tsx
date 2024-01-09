@@ -1,7 +1,7 @@
 import { Button, Flex, Input, Modal, Select } from "antd";
 import { useState } from "react";
 import { Panel } from "reactflow";
-import { useFlowActions } from "../store";
+import { useFlowActions, useFlowState } from "../store";
 import { nanoid } from "nanoid";
 
 export default function TopRight() {
@@ -24,7 +24,17 @@ export default function TopRight() {
 
   return (
     <Panel position="top-right">
-      <Button onClick={() => setIsModalOpen(true)}>Add Node</Button>
+      <Flex gap="small" vertical>
+        <Button onClick={() => setIsModalOpen(true)}>Add Node</Button>
+        <Button
+          onClick={() => {
+            console.log(useFlowState.getState().nodes);
+            console.log(useFlowState.getState().edges);
+          }}
+        >
+          Export Graph
+        </Button>
+      </Flex>
       <Modal
         open={isModalOpen}
         title="Add Node"
